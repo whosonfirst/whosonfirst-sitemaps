@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+# -*-python-*-
+
+import os
+import sys
+import logging
+import datetime
+
+if __name__ == '__main__':
+
+    import optparse
+    opt_parser = optparse.OptionParser()
+
+    opt_parser.add_option('-u', '--url', dest='url', action='store', default=None, help='')
+    opt_parser.add_option('-s', '--sitemaps', dest='sitemaps', action='store', default=None, help='')
+    opt_parser.add_option('-o', '--output', dest='output', action='store', default=None, help='')
+
+    opt_parser.add_option('-v', '--verbose', dest='verbose', action='store_true', default=False, help='Be chatty (default is false)')
+    options, args = opt_parser.parse_args()
+
+    if options.verbose:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        # logging.basicConfig(level=logging.INFO)
+        pass
+
+    if not options.url:
+        logging.error("Missing URL")
+        sys.exit(1)
+
+    if not options.sitemaps:
+        logging.error("Missing sitemaps")
+        sys.exit(1)
+
+    fh = sys.stdout
+
+    if options.output != None:
+        fh = open(options.output, "w")
+
+    fh.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+    fh.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">")
+
+    for (r, d, files) in os.walk(options.sitemaps):
+
+        for f in files:   
+
+            if not f.startswith('sitemap-'):
+                continue
+
+            if not f.endswith('.txt'):
+                continue
+
+            path = os.path.join(options.sitemaps, f)
+            uri = os.path.join(options.url, f)
+
+            ts = os.path.getmtime(path)
+            ts = int(ts)
+
+            dt = datetime.datetime.fromtimestamp(ts)
+            lastmod = dt.isoformat()
+
+            fh.write("<sitemap>")
+            fh.write("<loc>%s</loc>" % uri)
+            fh.write("<lastmod>%s</lastmod>" % lastmod)
+            fh.write("</sitemap>")
+
+    fh.write("</sitemapindex>")
+    fh.close()
+
+    logging.info("all done")
+    sys.exit(0)
+

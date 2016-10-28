@@ -5,13 +5,12 @@ import os
 
 import requests
 import json
-import pprint
 import logging
 
 def make_fh(options, i):
 
     fname = "sitemap-%04d.txt" % i
-    path = os.path.join(options.outdir, fname)
+    path = os.path.join(options.sitemaps, fname)
     fh = open(path, "w")
     
     logging.info("write %s" % path)
@@ -25,8 +24,8 @@ if __name__ == '__main__':
     opt_parser.add_option('-H', '--host', dest='host', action='store', default='localhost', help='')
     opt_parser.add_option('-p', '--port', dest='port', action='store', default=9200, help='')
     opt_parser.add_option('-i', '--index', dest='index', action='store', default=None, help='')
-    opt_parser.add_option('-o', '--outdir', dest='outdir', action='store', default=None, help='')
-    opt_parser.add_option('-r', '--root', dest='root', action='store', default='https://whosonfirst.mapzen.com/spelunker/id', help='')
+    opt_parser.add_option('-s', '--sitemaps', dest='sitemaps', action='store', default=None, help='')
+    opt_parser.add_option('-u', '--url', dest='url', action='store', default='https://whosonfirst.mapzen.com/spelunker/id', help='')
 
     opt_parser.add_option('-v', '--verbose', dest='verbose', action='store_true', default=False, help='Be chatty (default is false)')
     options, args = opt_parser.parse_args()
@@ -41,8 +40,8 @@ if __name__ == '__main__':
         logging.error("Missing index")
         sys.exit(1)
 
-    if not options.outdir:
-        logging.error("Missing outdir")
+    if not options.sitemaps:
+        logging.error("Missing sitemaps")
         sys.exit(1)
 
     url = "http://%s:%s/%s/_search" % (options.host, options.port, options.index)    
@@ -86,7 +85,7 @@ if __name__ == '__main__':
         for h in rsp['hits']['hits']:
 
             id = h['_id']
-            mzurl = os.path.join(options.root, id)
+            mzurl = os.path.join(options.url, id)
             
             fh.write(mzurl + "\n")
 
