@@ -85,7 +85,9 @@ if __name__ == '__main__':
         for h in rsp['hits']['hits']:
 
             id = h['_id']
-            mzurl = os.path.join(options.url, id)
+
+            mzurl = os.path.join(options.url, "id")
+            mzurl = os.path.join(mzurl, id)
             
             fh.write(mzurl + "\n")
 
