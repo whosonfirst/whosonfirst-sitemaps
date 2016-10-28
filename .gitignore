@@ -1,0 +1,4 @@
+*~
+*.pyc
+sitemaps/*.txt
+sitemaps/*.xml
