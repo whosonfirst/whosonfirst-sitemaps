@@ -57,7 +57,7 @@ if __name__ == '__main__':
             ts = int(ts)
 
             dt = datetime.datetime.fromtimestamp(ts)
-            lastmod = dt.isoformat()
+            lastmod = dt.strftime("%Y-%m-%d")
 
             fh.write("<sitemap>")
             fh.write("<loc>%s</loc>" % uri)
